@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "cytoscape": "^3.19.0",
+    "cytoscape-compound-drag-and-drop": "^1.0.0",
     "cytoscape-context-menus": "^4.0.0",
     "cytoscape-edge-editing": "^3.0.2",
     "cytoscape-edgehandles": "^3.6.0",

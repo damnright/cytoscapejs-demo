@@ -15,6 +15,9 @@
            @dragend="addEleDragEnd"
            src="https://dummyimage.com/10x10/eaff00/fff.png">
       <div draggable="true" @dragstart="addEleDragStart($event,'tip','123tip')"  @dragend="addEleDragEnd" class="tip">123tip</div>
+      <img @dragstart="addEleDragStart($event,'dagre','diamond')"
+           @dragend="addEleDragEnd"
+           src="../assets/diamond.png">
     </div>
     <div id="cy" @dragenter="addEleDragEnter" @dragover="addEleDragOver"  @drop="addEleDrop"></div>
   </div>
@@ -28,6 +31,7 @@ import konva  from 'konva'
 import edgeEditing  from 'cytoscape-edge-editing'
 import undoRedo  from 'cytoscape-undo-redo'
 import contextMenus  from 'cytoscape-context-menus'
+import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop'
 import 'cytoscape-context-menus/cytoscape-context-menus.css'
 import { onBeforeUnmount, onMounted,ref } from 'vue'
 
@@ -35,7 +39,7 @@ cytoscape.use( edgehandles )
 cytoscape.use(edgeEditing,$,konva)
 cytoscape.use(undoRedo)
 cytoscape.use(contextMenus)
-
+cytoscape.use( compoundDragAndDrop )
 
 export default {
   name: 'graph',
@@ -43,7 +47,7 @@ export default {
   },
   setup(props) {
     // static var
-    let cy, eh,ee,
+    let cy, eh,ee,cdnd,ne,
       ehOptions = {
       preview: true, // whether to show added edges preview before releasing selection
       hoverDelay: 150, // time spent hovering over a target node before it is considered selected
@@ -186,7 +190,7 @@ export default {
       addEleDragEnter = (e) => {
       },
       addEleDragOver = (e) => {
-      const AllowedType = ['image','text','icon','tip']
+      const AllowedType = ['image','text','icon','tip','dagre']
       if(AllowedType.includes(dragFrom.value)){
         e.preventDefault()
         e.dataTransfer.dropEffect='move'
@@ -245,6 +249,14 @@ export default {
             })
             cy.one('mouseover','node[type = "imgNode"]',addTip)
             break;
+          case 'dagre':
+            cy.add({
+              group: 'nodes',
+              data: { width: 60,height: 60 ,dagreType:data.data,type:'dagreNode'},
+              classes: 'dagreNode',
+              renderedPosition: {x:e.offsetX,y:e.offsetY}
+            })
+            break;
           default:
             break;
         }
@@ -253,7 +265,6 @@ export default {
       addEleDragEnd = (e) => {
         dragFrom.value = ''
       }
-
 
     onMounted(()=>{
       cy = cytoscape({
@@ -337,6 +348,15 @@ export default {
             }
           },
           {
+            selector:'node.dagreNode',
+            style: {
+              'shape':'data(dagreType)',
+              // 'label': 'data(id)',
+              'height': 'data(height)',
+              'width': 'data(width)'
+            }
+          },
+          {
             selector: 'edge',
             style: {
               // 'width': 2,
@@ -350,8 +370,8 @@ export default {
             selector: '.eh-handle',
             style: {
               'background-color': 'red',
-              'width': 12,
-              'height': 12,
+              'width': 6,
+              'height': 6,
               'shape': 'ellipse',
               'overlay-opacity': 0,
             }
@@ -402,6 +422,7 @@ export default {
         bendRemovalSensitivity: 16,
         enableMultipleAnchorRemovalOption: true
       })
+      cdnd = cy.compoundDragAndDrop()
       cy.style().update();
 
       document.addEventListener('keydown', function (e){
