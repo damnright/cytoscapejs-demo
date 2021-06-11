@@ -11,8 +11,11 @@
         @dragend="addEleDragEnd"
         src="https://dummyimage.com/50x50/4af534/fff.png">
       <div draggable="true" @dragstart="addEleDragStart($event,'text','123textNode')"  @dragend="addEleDragEnd" class="textNode">123textNode</div>
+      <img @dragstart="addEleDragStart($event,'icon','https://dummyimage.com/10x10/eaff00/fff.png')"
+           @dragend="addEleDragEnd"
+           src="https://dummyimage.com/10x10/eaff00/fff.png">
     </div>
-    <div id="cy" @dragover="addEleDragOver"  @drop="addEleDrop"></div>
+    <div id="cy" @dragenter="addEleDragEnter" @dragover="addEleDragOver"  @drop="addEleDrop"></div>
   </div>
 </template>
 
@@ -179,8 +182,10 @@ export default {
         dragFrom.value = type
       e.dataTransfer.setData('text/plain',JSON.stringify({type:type,data:data}))
       },
+      addEleDragEnter = (e) => {
+      },
       addEleDragOver = (e) => {
-      const AllowedType = ['image','text']
+      const AllowedType = ['image','text','icon']
       if(AllowedType.includes(dragFrom.value)){
         e.preventDefault()
         e.dataTransfer.dropEffect='move'
@@ -188,14 +193,21 @@ export default {
       },
       addEleDrop = (e) => {
       const data = JSON.parse(e.dataTransfer.getData("text/plain"))
+        function addIcon(e){
+          console.log(e.target.id())
+          let iconTarget = cy.$('#'+e.target.id())
+          if(iconTarget.isNode()&&iconTarget.hasClass('imgNode')){
+            let sourceImage = iconTarget.data('imgurl')
+            iconTarget.data('imgurl',[sourceImage,data.data])
+            iconTarget.classes(['imgNodeWithIcon'])
+          }
+        }
       e.preventDefault()
-        console.log(data)
-        console.log(e)
         switch (data.type) {
           case 'image':
             cy.add({
               group: 'nodes',
-              data: { width: 80,height: 80 ,imgurl:[data.data,'https://dummyimage.com/6x6/4af534/fff.png']},
+              data: { width: 50,height: 50 ,imgurl:data.data},
               classes: 'imgNode',
               renderedPosition: {x:e.offsetX,y:e.offsetY}
             })
@@ -207,6 +219,15 @@ export default {
               classes: 'textNode',
               renderedPosition: {x:e.offsetX,y:e.offsetY}
             })
+            break;
+          case 'icon':
+            // catch icon target
+            cy.one('mouseover',(e)=>{
+              setTimeout(()=>{
+                cy.removeListener('mouseover',addIcon)
+              },0)
+            })
+            cy.one('mouseover','node.imgNode',addIcon)
             break;
           default:
             break;
@@ -244,12 +265,26 @@ export default {
             style: {
               'shape':'rectangle',
               'background-image': 'data(imgurl)',
+              'background-clip': 'none',
+              'background-fit': 'contain',
+              'background-width': 'auto',
+              'background-height': 'auto',
+              // 'label': 'data(id)',
+              'height': 'data(height)',
+              'width': 'data(width)'
+            }
+          },
+          {
+            selector:'node.imgNodeWithIcon',
+            style: {
+              'shape':'rectangle',
+              'background-image': 'data(imgurl)',
               'background-clip': ['none', 'none'],
               'background-fit': ['contain', 'none'],
               'background-width': ['auto', '10px'],
               'background-height': ['auto', '10px'],
-              'background-position-x': ['50%', '100%'],
-              'background-position-y': ['50%', '0%'],
+              'background-position-x': ['0%', '100%'],
+              'background-position-y': ['0%', '0%'],
               'background-offset-x': ['0px', '10px'],
               'background-offset-y': ['0px', '-10px'],
               'bounds-expansion': 10,
@@ -361,6 +396,7 @@ export default {
 
     return {
       addEleDragStart,
+      addEleDragEnter,
       addEleDragOver,
       addEleDrop,
       addEleDragEnd
