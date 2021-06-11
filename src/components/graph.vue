@@ -367,6 +367,17 @@ export default {
             }
           },
           {
+            selector: 'edge',
+            style: {
+              // 'width': 2,
+              // 'line-color': '#ccc',
+              // 'target-arrow-color': '#ccc',
+              'target-arrow-shape': 'triangle',
+              // 'curve-style': 'bezier'
+              "curve-style": "taxi"
+            }
+          },
+          {
             selector: '.eh-handle',
             style: {
               'background-color': 'red',
@@ -423,7 +434,12 @@ export default {
         enableMultipleAnchorRemovalOption: true
       })
       cdnd = cy.compoundDragAndDrop()
-      cy.style().update();
+      cy.style()
+        .selector('edge')
+        .style({
+          'curve-style': 'bezier'
+        })
+        .update()
 
       document.addEventListener('keydown', function (e){
         if (e.ctrlKey && e.which == '90') {
