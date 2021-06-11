@@ -50,7 +50,7 @@ export default {
       noEdgeEventsInDraw: false, // set events:no to edges during draws, prevents mouseouts on compounds
       disableBrowserGestures: true, // during an edge drawing gesture, disable browser gestures such as two-finger trackpad swipe and pinch-to-zoom
       handlePosition: function( node ){
-        return 'middle top'; // sets the position of the handle in the format of "X-AXIS Y-AXIS" such as "left top", "middle top"
+        return 'middle middle'; // sets the position of the handle in the format of "X-AXIS Y-AXIS" such as "left top", "middle top"
       },
       handleInDrawMode: false, // whether to show the handle in draw mode
       edgeType: function( sourceNode, targetNode ){
@@ -195,7 +195,7 @@ export default {
           case 'image':
             cy.add({
               group: 'nodes',
-              data: { width: 80,height: 80 ,imgurl:data.data},
+              data: { width: 80,height: 80 ,imgurl:[data.data,'https://dummyimage.com/6x6/4af534/fff.png']},
               classes: 'imgNode',
               renderedPosition: {x:e.offsetX,y:e.offsetY}
             })
@@ -243,17 +243,16 @@ export default {
             selector:'node.imgNode',
             style: {
               'shape':'rectangle',
-              // 'background-image': 'data(imgurl)',
-              'background-image': ['data(imgurl)','https://dummyimage.com/6x6/4af534/fff.png'],
-              'background-width': ['60%','30%'],
-              'background-height': ['60%','30%'],
-              'background-position-x': ['0%','0%'],
-              'background-position-y':['0%','0%'],
-              'background-image-containment': 'over',
-              // 'background-position-x': ['0px',' 30%'],
-              // 'background-position-y': ['0px',' 80%'],
-              'background-clip': 'none',
-              'bounds-expansion': 100,
+              'background-image': 'data(imgurl)',
+              'background-clip': ['none', 'none'],
+              'background-fit': ['contain', 'none'],
+              'background-width': ['auto', '10px'],
+              'background-height': ['auto', '10px'],
+              'background-position-x': ['50%', '100%'],
+              'background-position-y': ['50%', '0%'],
+              'background-offset-x': ['0px', '10px'],
+              'background-offset-y': ['0px', '-10px'],
+              'bounds-expansion': 10,
               // 'label': 'data(id)',
               'height': 'data(height)',
               'width': 'data(width)'
