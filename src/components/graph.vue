@@ -14,6 +14,7 @@
       <img @dragstart="addEleDragStart($event,'icon','https://dummyimage.com/10x10/eaff00/fff.png')"
            @dragend="addEleDragEnd"
            src="https://dummyimage.com/10x10/eaff00/fff.png">
+      <div draggable="true" @dragstart="addEleDragStart($event,'tip','123tip')"  @dragend="addEleDragEnd" class="tip">123tip</div>
     </div>
     <div id="cy" @dragenter="addEleDragEnter" @dragover="addEleDragOver"  @drop="addEleDrop"></div>
   </div>
@@ -185,7 +186,7 @@ export default {
       addEleDragEnter = (e) => {
       },
       addEleDragOver = (e) => {
-      const AllowedType = ['image','text','icon']
+      const AllowedType = ['image','text','icon','tip']
       if(AllowedType.includes(dragFrom.value)){
         e.preventDefault()
         e.dataTransfer.dropEffect='move'
@@ -194,20 +195,26 @@ export default {
       addEleDrop = (e) => {
       const data = JSON.parse(e.dataTransfer.getData("text/plain"))
         function addIcon(e){
-          console.log(e.target.id())
           let iconTarget = cy.$('#'+e.target.id())
-          if(iconTarget.isNode()&&iconTarget.hasClass('imgNode')){
             let sourceImage = iconTarget.data('imgurl')
             iconTarget.data('imgurl',[sourceImage,data.data])
             iconTarget.classes(['imgNodeWithIcon'])
-          }
+
         }
+        function addTip(e){
+          console.log(e.target.id())
+          let tipTarget = cy.$('#'+e.target.id())
+            tipTarget.data('tip',data.data)
+            !tipTarget.hasClass('nodeWithTip')&&tipTarget.addClass('nodeWithTip')
+        }
+
       e.preventDefault()
+
         switch (data.type) {
           case 'image':
             cy.add({
               group: 'nodes',
-              data: { width: 50,height: 50 ,imgurl:data.data},
+              data: { width: 50,height: 50 ,imgurl:data.data,type:'imgNode'},
               classes: 'imgNode',
               renderedPosition: {x:e.offsetX,y:e.offsetY}
             })
@@ -215,7 +222,7 @@ export default {
           case 'text':
             cy.add({
               group: 'nodes',
-              data: { width: 80,height: 20 ,text: data.data},
+              data: { width: 80,height: 20 ,text: data.data,type:'textNode'},
               classes: 'textNode',
               renderedPosition: {x:e.offsetX,y:e.offsetY}
             })
@@ -227,7 +234,16 @@ export default {
                 cy.removeListener('mouseover',addIcon)
               },0)
             })
-            cy.one('mouseover','node.imgNode',addIcon)
+            cy.one('mouseover','node[type = "imgNode"]',addIcon)
+            break;
+          case 'tip':
+            // catch tip target
+            cy.one('mouseover',(e)=>{
+              setTimeout(()=>{
+                cy.removeListener('mouseover',addTip)
+              },0)
+            })
+            cy.one('mouseover','node[type = "imgNode"]',addTip)
             break;
           default:
             break;
@@ -301,7 +317,6 @@ export default {
               'border-style': 'solid',
               'border-color': '#aaa',
               'background-color': '#fff',
-              'text-color': '#000',
               'text-wrap': 'wrap',
               'text-halign': 'center',
               'text-valign': 'center',
@@ -309,6 +324,16 @@ export default {
               'font-size': '12',
               'height': 'data(height)',
               'width': 'data(width)'
+            }
+          },
+          {
+            selector:'node.nodeWithTip',
+            style: {
+              'text-halign': 'center',
+              'text-valign': 'bottom',
+              'label': 'data(tip)',
+              'font-size': '10',
+              'text-margin-y': '10'
             }
           },
           {
@@ -427,6 +452,11 @@ export default {
   }
   .textNode{
     border: 1px solid #222;
+    cursor: default;
+    margin-left: 20px;
+  }
+  .tip{
+    background-color: #fff;
     cursor: default;
     margin-left: 20px;
   }
