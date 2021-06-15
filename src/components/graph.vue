@@ -34,6 +34,7 @@ import edgeEditing  from 'cytoscape-edge-editing'
 import undoRedo  from 'cytoscape-undo-redo'
 import contextMenus  from 'cytoscape-context-menus'
 import compoundDragAndDrop from 'cytoscape-compound-drag-and-drop'
+import gridGuide  from 'cytoscape-grid-guide'
 import 'cytoscape-context-menus/cytoscape-context-menus.css'
 import { onBeforeUnmount, onMounted,ref } from 'vue'
 
@@ -41,6 +42,7 @@ cytoscape.use( edgehandles )
 cytoscape.use(edgeEditing,$,konva)
 cytoscape.use(undoRedo)
 cytoscape.use(contextMenus)
+cytoscape.use(gridGuide)
 cytoscape.use( compoundDragAndDrop )
 
 export default {
@@ -437,6 +439,14 @@ export default {
         enableMultipleAnchorRemovalOption: true
       })
       cdnd = cy.compoundDragAndDrop()
+      cy.gridGuide({
+        guidelinesStyle: {
+          strokeStyle: "black",
+          horizontalDistColor: "#ff0000",
+          verticalDistColor: "green",
+          initPosAlignmentColor: "#0000ff",
+        }
+      })
       cy.style().update()
       cy.boxSelectionEnabled(true)
       // cy.style()
