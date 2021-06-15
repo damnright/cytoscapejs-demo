@@ -19,7 +19,7 @@
            @dragend="addEleDragEnd"
            src="../assets/diamond.png">
       <div @click="delEle">删除</div>
-      <div style="margin-left: 20px;">按住shift框选</div>
+      <div style="margin-left: 20px;">按住shift框选；右键给边添加锚点；拖动小黄点或123tip到node上</div>
     </div>
     <div id="cy" @dragenter="addEleDragEnter" @dragover="addEleDragOver"  @drop="addEleDrop"></div>
   </div>
@@ -210,7 +210,6 @@ export default {
 
         }
         function addTip(e){
-          console.log(e.target.id())
           let tipTarget = cy.$('#'+e.target.id())
             tipTarget.data('tip',data.data)
             !tipTarget.hasClass('nodeWithTip')&&tipTarget.addClass('nodeWithTip')
