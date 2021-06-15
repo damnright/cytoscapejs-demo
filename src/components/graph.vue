@@ -19,6 +19,7 @@
            @dragend="addEleDragEnd"
            src="../assets/diamond.png">
       <div @click="delEle">删除</div>
+      <div style="margin-left: 20px;">按住shift框选</div>
     </div>
     <div id="cy" @dragenter="addEleDragEnter" @dragover="addEleDragOver"  @drop="addEleDrop"></div>
   </div>
@@ -290,6 +291,13 @@ export default {
               // 'label': 'data(id)',
               'height': 20,
               'width': 20
+            }
+          },
+          {
+            selector: 'node:selected',
+            style: {
+              'border-width': 1,
+              'border-color': '#000'
             }
           },
           {
