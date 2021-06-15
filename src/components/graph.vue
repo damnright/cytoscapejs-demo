@@ -430,6 +430,7 @@ export default {
       })
       cdnd = cy.compoundDragAndDrop()
       cy.style().update()
+      cy.boxSelectionEnabled(true)
       // cy.style()
       //   .selector('edge')
       //   .style({
@@ -437,6 +438,7 @@ export default {
       //   })
       //   .update()
 
+      // test code
       cy.on('tap', '*', function(evt){
         var node = evt.target;
         console.log(  node.classes() );
