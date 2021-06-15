@@ -18,6 +18,7 @@
       <img @dragstart="addEleDragStart($event,'dagre','diamond')"
            @dragend="addEleDragEnd"
            src="../assets/diamond.png">
+      <div @click="delEle">删除</div>
     </div>
     <div id="cy" @dragenter="addEleDragEnter" @dragover="addEleDragOver"  @drop="addEleDrop"></div>
   </div>
@@ -264,7 +265,11 @@ export default {
       },
       addEleDragEnd = (e) => {
         dragFrom.value = ''
-      }
+      },
+
+    delEle = () => {
+      cy.remove('*:selected')
+    }
 
     onMounted(()=>{
       cy = cytoscape({
@@ -364,17 +369,7 @@ export default {
               // 'target-arrow-color': '#ccc',
               'target-arrow-shape': 'triangle',
               'curve-style': 'bezier'
-            }
-          },
-          {
-            selector: 'edge',
-            style: {
-              // 'width': 2,
-              // 'line-color': '#ccc',
-              // 'target-arrow-color': '#ccc',
-              'target-arrow-shape': 'triangle',
-              // 'curve-style': 'bezier'
-              "curve-style": "taxi"
+              // "curve-style": "taxi"
             }
           },
           {
@@ -434,12 +429,19 @@ export default {
         enableMultipleAnchorRemovalOption: true
       })
       cdnd = cy.compoundDragAndDrop()
-      cy.style()
-        .selector('edge')
-        .style({
-          'curve-style': 'bezier'
-        })
-        .update()
+      cy.style().update()
+      // cy.style()
+      //   .selector('edge')
+      //   .style({
+      //     'curve-style': 'bezier'
+      //   })
+      //   .update()
+
+      cy.on('tap', '*', function(evt){
+        var node = evt.target;
+        console.log(  node.classes() );
+        console.log(  node.data() );
+      });
 
       document.addEventListener('keydown', function (e){
         if (e.ctrlKey && e.which == '90') {
@@ -461,7 +463,8 @@ export default {
       addEleDragEnter,
       addEleDragOver,
       addEleDrop,
-      addEleDragEnd
+      addEleDragEnd,
+      delEle
     }
   }
 }
