@@ -1,14 +1,16 @@
 <template>
-  <graph msg="Welcome to Your Vue.js App"/>
+<!--  <graph msg="Welcome to Your Vue.js App"/>-->
+  <x6graph></x6graph>
 </template>
 
 <script>
 import graph from './components/graph.vue'
+import x6graph from './components/x6.vue'
 
 export default {
   name: 'App',
   components: {
-    graph
+    x6graph
   }
 }
 </script>
