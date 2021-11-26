@@ -1,6 +1,6 @@
 <template>
-<!--  <graph msg="Welcome to Your Vue.js App"/>-->
-  <x6graph></x6graph>
+  <graph msg="Welcome to Your Vue.js App"/>
+<!--  <x6graph></x6graph>-->
 </template>
 
 <script>
@@ -10,7 +10,7 @@ import x6graph from './components/x6.vue'
 export default {
   name: 'App',
   components: {
-    x6graph
+    graph
   }
 }
 </script>
